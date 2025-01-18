@@ -1,0 +1,198 @@
+#Vamos a crear un gestor de contactos basico
+# Cada ID del diccionario principal es una clave cuyo valor es otro diccionario. 
+# Este diccionario interno contiene las claves 'Nombre', 'Apellido1', 'Apellido2', 'Telefono', 'Direccion' y 'email', 
+# y sus valores representan la información específica de cada contacto.
+
+contactos = {
+            1:{'Nombre':'Antonio' ,
+                'Apellido1':'Sánchez',
+               'Apellido2':'Llamas',
+               'Telefono':'654123987',
+               'Direccion':'C/Los acebos 52',
+               'email':'toño@gmail.com'},
+            2:{'Nombre':'Felix',
+                'Apellido1':'Rodriguez',
+             'Apellido2':'de la Fuente',
+             'Telefono':'698741258',
+             'Direccion':'C/Los Sauces',
+             'email':'felisuco@hotmail.com'},
+            3:{'Nombre':'Bautista',
+                'Apellido1':'Flauti',
+                'Apellido2':'Hamelin',
+                'Telefono':'652314987',
+                'Direccion':'C/Sucia los contenedores',
+                'email':'trochoymocho@yahoo.es'}
+}
+
+#Listamos los contactos
+def listar_contactos():
+    print(len(contactos.keys()), "contactos encontrados en la agenda")  #Cuenta el número de keys() que hay en el diccionario principal contactos
+    encontrados = [contacto for contacto in contactos.values()] #Elabora una lista con todos los values() del diccionario principal
+    if encontrados:
+        for contacto in encontrados:
+            print(contacto['Nombre'])  #Solo muestra el contenido de la sub-clave 'Nombre'
+    else:
+        print("No hay contactos en la agenda")
+
+#Mostramos los detalles de el/los contactos 
+def ver_detalles(nombre):
+    info_contacto = [contacto for contacto in contactos.values() if contacto['Nombre'] == nombre] #Busca coincidencias con la sub-clave 'Nombre'
+
+    if info_contacto:
+        #Si existe, muestra por pantalla los valores de las sub-claves
+        for contacto in info_contacto:
+            print(f"Nombre: {contacto['Nombre']}")
+            print(f"Primer apellido: {contacto['Apellido1']}")
+            print(f"Segundo apellido: {contacto['Apellido2']}")
+            print(f"Telefono de contacto: {contacto['Telefono']}")
+            print(f"Direccion: {contacto['Direccion']}")
+            print(f"Direccion correo electronico: {contacto['email']}")
+            print("*" * 30, "\n") #Separamos en caso de que haya más de una coincidencia
+    else:
+        print("Contacto no encontrado")
+
+    
+#Añadimos contacto a la agenda
+def añadir_contacto():
+    #Añadimos automaticamente un ID y luego introducimos manualmente los values() de cada sub-clave
+    contacto_id = max(contactos.keys(), default=0) + 1
+    nombre = input("Introduzca nombre de nuevo contacto: ")
+    apellido1 = input("Introduzca el primer apellido: ")
+    apellido2 = input("Introduzca el segundo apellido: ")
+    direccion = input("Introduzca la direccion: ")
+    telefono = input("Introduzca numero de telefono: ")
+    email = input("Introduzca direccion de e-mail: ")
+
+    #Discriminamos si ya tenemos el contacto en la agenda y en caso contrario añadimos la informacion
+    duplicados = any(contacto['Nombre'] == nombre and contacto['Apellido1'] == apellido1 and contacto['apellido2'] for contacto in contactos.values())
+
+    if duplicados:
+        print("Este contacto ya existe.\nPor favor, utilice la funcion de actualizar")
+    else:
+        contactos[contacto_id] = {
+            "Nombre" : nombre,
+            "Apellido1" : apellido1,
+            "Apellido2" : apellido2,
+            "Telefono" : telefono,
+            "Direccion" : direccion,
+            "email" : email
+        }
+
+        print(f"Contacto {nombre} añadido correctamente")
+
+#Eliminamos el contacto utilizando el metodo pop()
+def eliminar_contacto(nombre, apellido1, apellido2):
+    contacto = max((clave for clave, valor in contactos.items() if valor['Nombre'] == nombre and valor['Apellido1'] == apellido1 and valor['Apellido2'] == apellido2), None)
+    if contacto:
+        contactos.pop(contacto, None)
+        print("Contacto eliminado satisfactoriamente")
+    else:
+        print("Contacto no econtrado")
+
+#Actualizamos la informacion de un contacto ya existente. 
+def actualizar_contacto(nombre, apellido1, apellido2):
+
+    id_contacto = next((clave for clave, valor in contactos.items() if valor['Nombre'] == nombre and valor['Apellido1'] == apellido1 and valor['Apellido2'] == apellido2), None)
+
+    if id_contacto:
+        telefono = input("Introduzca nuevo numero de telefono: ")
+        direccion = input("Introduzca nueva direccion: ")
+        email = input("Introduzca nueva direccion de email: ")
+        contactos[id_contacto]['Telefono'] = telefono
+        contactos[id_contacto]['Direccion'] = direccion
+        contactos[id_contacto]['email'] = email
+        print("Contacto actualizado correctamente")
+    
+    else:
+        print("No existe contacto solicitado")
+
+#Búsqueda de contacto mediante telefono o direccion de email
+def buscar(opcion):
+    if opcion == "1":
+        telefono = input("Introduzca un número de teléfono: ")
+        info_contacto = [contacto for contacto in contactos.values() if contacto['Telefono'] == telefono]
+        if info_contacto:
+            for contacto in info_contacto:
+                print(f"Nombre: {contacto['Nombre']}")
+                print(f"Primer apellido: {contacto['Apellido1']}")
+                print(f"Segundo apellido: {contacto['Apellido2']}")
+                print(f"Telefono de contacto: {contacto['Telefono']}")
+                print(f"Direccion: {contacto['Direccion']}")
+                print(f"Direccion correo electronico: {contacto['email']}")
+                print("*" * 30, "\n")
+        else:
+            print("Contacto no encontrado")
+
+    elif opcion == "2":
+        email = input("Introduzca una direccion de email: ")
+        info_contacto = [contacto for contacto in contactos.values() if contacto['email'] == email]
+        if info_contacto:
+            for contacto in info_contacto:                
+                print(f"Nombre: {contacto['Nombre']}")
+                print(f"Primer apellido: {contacto['Apellido1']}")
+                print(f"Segundo apellido: {contacto['Apellido2']}")
+                print(f"Telefono de contacto: {contacto['Telefono']}")
+                print(f"Direccion: {contacto['Direccion']}")
+                print(f"Direccion correo electronico: {contacto['email']}")
+                print("*" * 30, "\n")
+        else:
+            print("Contacto no encontrado")
+    else:
+        print("Opción introducida no válida")
+   
+
+
+#MENU
+def menu():
+    while True:
+        print("""
+        1. Listar contactos
+        2. Ver detalles de un contacto
+        3. Añadir un contacto
+        4. Eliminar un contacto
+        5. Actualizar un contacto
+        6. Buscar por teléfono/email
+        7. Salir
+              """)
+        opcion = input("Elige una opción ->")
+        if opcion == "1":
+            listar_contactos()
+        elif opcion == "2":
+            nombre = input("Introduzca un nombre de un contacto: ")
+            ver_detalles(nombre)
+        elif opcion == "3":
+            añadir_contacto()
+        elif opcion == "4":
+            nombre = input("Introduzca un nombre de un contacto: ")
+            apellido1 = input("Introduzca el primer apellido: ")
+            apellido2 = input("Introduzca el segundo apellido: ")            
+            eliminar_contacto(nombre, apellido1, apellido2)
+        elif opcion == "5":
+            nombre = input("Nombre: ")
+            apellido1 = input("primer apellido: ")
+            apellido2 = input("Segundo apellido: ")
+            actualizar_contacto(nombre, apellido1, apellido2)
+        elif opcion == "6":
+            print("""
+                1 -> Búsqueda por teléfono
+                2 -> Búsqueda por email""")
+            opcion = input("Elija una opcion de búsqueda: ")
+            buscar(opcion)
+        elif opcion == "7":
+            print("Hasta luego!!")
+            break
+        else:
+            print("Introduzca una opcion válida")
+
+if __name__ == "__main__":
+    menu()
+
+
+
+
+
+
+
+
+
+
